@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -18,9 +19,16 @@ func main() {
 		fmt.Println("URL is not valid:", err)
 		os.Exit(1)
 	}
-	response, err := http.Get()
+	response, err := http.Get(args[1])
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("HTTP status code: %d\nBody: %s\n", response.StatusCode, string(body))
 }
